@@ -18,7 +18,7 @@ model_directory = os.path.join(folder_paths.models_dir, "cosyvoice")
 import ffmpeg
 import audiosegment
 from srt import parse as SrtPare
-from .cli.cosyvoice import CosyVoice
+from cosyvoice.cli.cosyvoice import CosyVoice
 
 sft_spk_list = ['中文女', '中文男', '日语男', '粤语女', '英文女', '英文男', '韩语女']
 inference_mode_list = ['预训练音色', '3s极速复刻', '跨语种复刻', '自然语言控制']
