@@ -10,14 +10,15 @@ now_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(now_dir)
 input_dir = folder_paths.get_input_directory()
 output_dir = os.path.join(folder_paths.get_output_directory(),"cosyvoice_dubb")
-pretrained_models = os.path.join(now_dir,"pretrained_models")
+# pretrained_models = os.path.join(now_dir,"pretrained_models")
+model_directory = os.path.join(folder_paths.models_dir, "cosyvoice")
 
-from modelscope import snapshot_download
+# from modelscope import snapshot_download
 
 import ffmpeg
 import audiosegment
 from srt import parse as SrtPare
-from cosyvoice.cli.cosyvoice import CosyVoice
+from .cli.cosyvoice import CosyVoice
 
 sft_spk_list = ['中文女', '中文男', '日语男', '粤语女', '英文女', '英文男', '韩语女']
 inference_mode_list = ['预训练音色', '3s极速复刻', '跨语种复刻', '自然语言控制']
@@ -121,18 +122,18 @@ class CosyVoiceNode:
                  prompt_text=None,prompt_wav=None,instruct_text=None):
         t0 = ttime()
         if inference_mode == '自然语言控制':
-            model_dir = os.path.join(pretrained_models,"CosyVoice-300M-Instruct")
-            snapshot_download(model_id="iic/CosyVoice-300M-Instruct",local_dir=model_dir)
+            model_dir = os.path.join(model_directory,"CosyVoice-300M-Instruct")
+            # snapshot_download(model_id="iic/CosyVoice-300M-Instruct",local_dir=model_dir)
             assert instruct_text is not None, "in 自然语言控制 mode, instruct_text can't be none"
         if inference_mode in ["跨语种复刻",'3s极速复刻']:
-            model_dir = os.path.join(pretrained_models,"CosyVoice-300M")
-            snapshot_download(model_id="iic/CosyVoice-300M",local_dir=model_dir)
+            model_dir = os.path.join(model_directory,"CosyVoice-300M")
+            # snapshot_download(model_id="iic/CosyVoice-300M",local_dir=model_dir)
             assert prompt_wav is not None, "in 跨语种复刻 or 3s极速复刻 mode, prompt_wav can't be none"
             if inference_mode == "3s极速复刻":
                 assert len(prompt_text) > 0, "prompt文本为空，您是否忘记输入prompt文本？"
         if inference_mode == "预训练音色":
-            model_dir = os.path.join(pretrained_models,"CosyVoice-300M-SFT")
-            snapshot_download(model_id="iic/CosyVoice-300M-SFT",local_dir=model_dir)
+            model_dir = os.path.join(model_directory,"CosyVoice-300M-SFT")
+            # snapshot_download(model_id="iic/CosyVoice-300M-SFT",local_dir=model_dir)
 
 
         if self.model_dir != model_dir:
@@ -211,8 +212,8 @@ class CosyVoiceDubbingNode:
     CATEGORY = "AIFSH_CosyVoice"
 
     def generate(self,tts_srt,prompt_wav,language,if_single,seed,prompt_srt=None):
-        model_dir = os.path.join(pretrained_models,"CosyVoice-300M")
-        snapshot_download(model_id="iic/CosyVoice-300M",local_dir=model_dir)
+        model_dir = os.path.join(model_directory,"CosyVoice-300M")
+        # snapshot_download(model_id="iic/CosyVoice-300M",local_dir=model_dir)
         set_all_random_seed(seed)
         if self.cosyvoice is None:
             self.cosyvoice = CosyVoice(model_dir)
